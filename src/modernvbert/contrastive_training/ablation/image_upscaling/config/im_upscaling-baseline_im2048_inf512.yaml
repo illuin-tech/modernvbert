@@ -1,0 +1,48 @@
+eval_config:
+  model_name_or_path: /lustre/fsn1/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/ablations/image_upscaling/im_upscaling-baseline_im2048__inf512/final
+  wrapper_cls: BiEuroVBertWrapper
+  tasks:
+  # Document Retrieval
+  - VidoreArxivQARetrieval
+  - VidoreDocVQARetrieval
+  - VidoreInfoVQARetrieval
+  - VidoreTabfquadRetrieval
+  - VidoreTatdqaRetrieval
+  - VidoreShiftProjectRetrieval
+  - VidoreSyntheticDocQAAIRetrieval
+  - VidoreSyntheticDocQAEnergyRetrieval
+  - VidoreSyntheticDocQAGovernmentReportsRetrieval
+  - VidoreSyntheticDocQAHealthcareIndustryRetrieval
+  - Vidore2ESGReportsRetrieval
+  - Vidore2EconomicsReportsRetrieval
+  - Vidore2BioMedicalLecturesRetrieval
+  - Vidore2ESGReportsHLRetrieval
+  # Caption Retrieval
+  - MSCOCOT2IRetrieval
+  - MSCOCOI2TRetrieval
+  - Flickr30kT2IRetrieval
+  - Flickr30kI2TRetrieval
+  # ClassificationZS
+  - Caltech101ZeroShot
+  - Food101ZeroShot
+  - StanfordCarsZeroShot
+  - OxfordPetsZeroShot
+  - OxfordFlowersClassificationZeroShot
+  - DTDZeroShot
+  - FER2013ZeroShot
+  - EuroSATZeroShot
+  - CIFAR100ZeroShot
+  # Classification
+  - Caltech101
+  - Food101Classification
+  - StanfordCars
+  - OxfordPets
+  - OxfordFlowersClassification
+  - DTD
+  - FER2013
+  - EuroSAT
+  - CIFAR100
+  batch_size: 32
+  output_folder: /lustre/fswork/projects/rech/nwd/uyn61im/visual_encoder/posttraining/ablations/image_upscaling/results
+  encode_kwargs:
+    max_image_size: 2048

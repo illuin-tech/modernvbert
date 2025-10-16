@@ -1,0 +1,133 @@
+data_param:
+    sft:
+        dataset_name: SFT
+        training_datasets_paths: /lustre/fsn1/projects/rech/nwd/uyn61im/hf_home/hub/datasets--SmolvencoderOrg--mix11/snapshots/30b53745d852a3ee7b2b788445e3227470713cb8
+        add_begin_of_doc_token: True
+        add_end_of_doc_token: True
+        map_batch_size: 64
+        max_num_images: 3
+        max_seq_len: 7000
+        pad_dataset: True
+        # shuffle_initial_urls_list: True
+        shuffle_before_split_by_node_buffer_size: 1500
+        shuffle_before_split_by_worker_buffer_size: 1500
+        shuffle_after_tarfile_to_samples_buffer_size: 2000
+        shuffle_after_packing: True
+        max_image_size: 1024
+        scale_up_max: 2.0
+        scale_up_frequency: 0.0
+        pre_split_scale_up_max: 2.0
+        pre_split_scale_up_frequency: 1.0
+    num_workers: 3
+    realtime_processing: True
+    persistent_workers: True
+    proba_interleaving_dataset: [1.0]
+    use_webdataset: True
+    mask_type: MLM
+    collator_args:
+        mlm_probability: 0.5
+hparams:
+    tokenizer_name: SmolVEncoder/encoder-210m-30
+    tokenizer_params: '{"use_fast": True}'
+    tokenizer_add_tokens: '[AddedToken("<global-img>", rstrip=False, lstrip=False, normalized=False), 
+        AddedToken("<row_1_col_1>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_1_col_2>", rstrip=False, lstrip=False, normalized=False), 
+        AddedToken("<row_1_col_3>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_1_col_4>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_1_col_5>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_1_col_6>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_2_col_1>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_2_col_2>", rstrip=False, lstrip=False, normalized=False),   
+        AddedToken("<row_2_col_3>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_2_col_4>", rstrip=False, lstrip=False, normalized=False), 
+        AddedToken("<row_2_col_5>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_2_col_6>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_3_col_1>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_3_col_2>", rstrip=False, lstrip=False, normalized=False), 
+        AddedToken("<row_3_col_3>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_3_col_4>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_3_col_5>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_3_col_6>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_4_col_1>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_4_col_2>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_4_col_3>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_4_col_4>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_4_col_5>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_4_col_6>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_5_col_1>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_5_col_2>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_5_col_3>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_5_col_4>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_5_col_5>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_5_col_6>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_6_col_1>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_6_col_2>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_6_col_3>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_6_col_4>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<row_6_col_5>", rstrip=False, lstrip=False, normalized=False), AddedToken("<row_6_col_6>", rstrip=False, lstrip=False, normalized=False),
+        AddedToken("<end_of_utterance>", rstrip=False, lstrip=False, normalized=False), 
+        AddedToken("<fake_token_around_image>", rstrip=False, lstrip=False, normalized=False), 
+        AddedToken("<image>", rstrip=False, lstrip=False, normalized=False),
+    ]'
+    tokenizer_add_special_tokens: '{}'
+    model_name: SmolVEncoder/encoder-210m-30
+    model_config:
+        vision_model_name: google/siglip2-base-patch16-512  
+        text_model_name: SmolVEncoder/encoder-210m-30
+        freeze_config:
+            freeze_vision_layers: True
+            freeze_text_layers: True
+            freeze_lm_head: True
+        tie_word_embeddings: False
+        qk_layer_norms: False
+        use_cache: True
+        neftune_noise_alpha: 0.0
+        image_token_id: 128295
+    lora_config:
+        lora_alpha: 16
+        lora_dropout: 0.1
+        r: 64
+        bias: "none"
+        init_lora_weights: "gaussian"
+        use_dora: True
+    use_lora: True
+    patterns_to_loraify: [
+        ["model", "vision_model", "encoder", "q_proj"],
+        ["model", "vision_model", "encoder", "k_proj"],
+        ["model", "vision_model", "encoder", "v_proj"],
+        ["model", "vision_model", "encoder", "out_proj"],
+        ["model", "vision_model", "encoder", "mlp"],
+        ["model", "vision_model", "head", "mlp"],
+        ["model", "text_model", "layers", "proj"],
+        ["lm_head"],
+    ]
+    patterns_to_unfreeze: [
+        ["model", "connector"], 
+        ["model", "vision_model", "embed"], 
+        ["norm"], 
+        ["model", "text_model", "embed_tokens", "additional_embedding"], 
+        ["additional_fc"]
+    ]
+    batch_size_per_gpu: 4
+    grad_acc_size: 4
+    gradient_checkpointing: True
+    grad_clip: 1.0
+    max_num_opt_steps: 30000
+    max_num_epochs: 1
+    seed: 42
+    #train_logging_activations:
+    #- wandb
+    train_logging_activations_opt_steps: 250
+    #train_logging_grad_param_deepspeed:
+    #- wandb
+    train_logging_grad_param_deepspeed_opt_steps: 250
+    train_logging_opt_steps: 1
+    train_saving_opt_steps: 2000
+    do_validation: False
+    save_dir: /lustre/fsn1/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/slbert/vbert-siglip2-slbert-30_210
+    wandb_enable: true
+    wandb_entity: smolvencoder
+    wandb_project: modality_align
+    wandb_tags: 
+    - siglip2
+    - slbert
+    upload_to_s3: False
+    timing_break_down: True
+optim_param:
+    vl_optim: AdamW
+    vl_optim_params:
+        betas: [0.9, 0.999]
+        lr: 0.0001
+        weight_decay: 0.1
+        no_decay: ["bias", "alpha", "layernorm", "ln", "perceiver_resampler", "layer_norm"]
+    vl_lr_scheduler: get_wsd_schedule
+    vl_lr_scheduler_params:
+        last_epoch: -1
+        num_warmup_steps: 2000
+        num_decay_steps: 6000
+        num_training_steps: 30000
+        decay_type: 1-sqrt
+    z_loss: 0

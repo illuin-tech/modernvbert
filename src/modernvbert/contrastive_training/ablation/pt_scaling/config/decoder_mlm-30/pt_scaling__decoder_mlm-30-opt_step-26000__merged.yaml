@@ -1,0 +1,83 @@
+model_args:
+  model_name_or_path: /lustre/fsn1/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/ablations/clm_to_mlm/vlm-siglip2-sllm_210__clm-20/opt_step-26000__merged
+  model_type: BiEuroVBert
+  loss_type: BiEncoderLoss
+  loading_kwargs:
+    attn_implementation: flash_attention_2
+    torch_dtype: bfloat16
+    trust_remote_code: true
+train_dataset_args:
+- dataset_name_or_path: SmolVEncoder/mscoco-1st-caption
+  loading_kwargs:
+    modality: t2i
+    split: train
+- dataset_name_or_path: manu/colpali-queries
+  loading_kwargs:
+    split: train
+tr_args:
+  output_dir: /lustre/fsn1/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/ablations/pt_scaling/decoder_mlm-30/pt_scaling__decoder_mlm-30-opt_step-26000__merged
+  num_train_epochs: 1
+  per_device_train_batch_size: 64
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: true
+  gradient_checkpointing_kwargs:
+    use_reentrant: false
+  eval_strategy: 'no'
+  save_strategy: epoch
+  logging_steps: 1
+  warmup_ratio: 0.1
+  learning_rate: 0.0002
+  run_name: pt_scaling__decoder_mlm-30-opt_step-26000__merged
+  report_to: wandb
+lora_config:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.1
+  init_lora_weights: gaussian
+  bias: none
+  task_type: FEATURE_EXTRACTION
+  target_modules: (.*(model.text_model).*(down_proj|gate_proj|up_proj|k_proj|q_proj|v_proj|o_proj).*$)
+eval_config:
+  wrapper_cls: BiEuroVBertWrapper
+  tasks:
+  # Document Retrieval
+  - VidoreArxivQARetrieval
+  - VidoreDocVQARetrieval
+  - VidoreInfoVQARetrieval
+  - VidoreTabfquadRetrieval
+  - VidoreTatdqaRetrieval
+  - VidoreShiftProjectRetrieval
+  - VidoreSyntheticDocQAAIRetrieval
+  - VidoreSyntheticDocQAEnergyRetrieval
+  - VidoreSyntheticDocQAGovernmentReportsRetrieval
+  - VidoreSyntheticDocQAHealthcareIndustryRetrieval
+  - Vidore2ESGReportsRetrieval
+  - Vidore2EconomicsReportsRetrieval
+  - Vidore2BioMedicalLecturesRetrieval
+  - Vidore2ESGReportsHLRetrieval
+  # Caption Retrieval
+  - MSCOCOT2IRetrieval
+  - MSCOCOI2TRetrieval
+  - Flickr30kT2IRetrieval
+  - Flickr30kI2TRetrieval
+  # ClassificationZS
+  - Caltech101ZeroShot
+  - Food101ZeroShot
+  - StanfordCarsZeroShot
+  - OxfordPetsZeroShot
+  - DTDZeroShot
+  - FER2013ZeroShot
+  - EuroSATZeroShot
+  - CIFAR100ZeroShot
+  # Classification
+  - Caltech101
+  - Food101Classification
+  - StanfordCars
+  - OxfordPets
+  - DTD
+  - FER2013
+  - EuroSAT
+  - CIFAR100
+  batch_size: 32
+  output_folder: /lustre/fswork/projects/rech/nwd/uyn61im/visual_encoder/posttraining/ablations/pt_scaling/results
+  encode_kwargs: {}

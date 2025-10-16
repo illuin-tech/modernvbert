@@ -1,0 +1,86 @@
+model_args:
+  model_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/models/ablation_vbert
+  model_type: BiEuroVBert
+  loss_type: BiEncoderLoss
+  loading_kwargs:
+    attn_implementation: flash_attention_2
+    torch_dtype: bfloat16
+    trust_remote_code: true
+train_dataset_args:
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/colpali_train_set
+  loading_kwargs: 
+    modality: t2i
+    subsets:
+    - train
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/mscoco-1st-caption
+  loading_kwargs: 
+    modality: t2i
+    split: train
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/mscoco-1st-caption
+  loading_kwargs: 
+    modality: i2t
+    split: train
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/natcap
+  loading_kwargs:
+    modality: t2i
+    num_samples: 118000
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/natcap
+  loading_kwargs:
+    modality: i2t
+    num_samples: 118000
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/rlhn
+  loading_kwargs:
+    num_samples: 250000
+    subsets:
+    - train
+tr_args:
+  output_dir: /linkhome/rech/genrce01/unj98sd/visual_encoder/models/contrastive_forcing/mixed_modality_250k_all_small_natcap_symm_data
+  num_train_epochs: 1
+  per_device_train_batch_size: 64
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: true
+  gradient_checkpointing_kwargs:
+    use_reentrant: false
+  eval_strategy: 'no'
+  save_strategy: steps
+  save_steps: 500
+  save_total_limit: 3
+  logging_steps: 1
+  warmup_ratio: 0.1
+  learning_rate: 0.0002
+  run_name: contrastive_mixed_colpali_coco_small_natcap_text_symm_data_250k
+  report_to: wandb
+  use_symmetric_loss: false
+  resume_from_checkpoint: /linkhome/rech/genrce01/unj98sd/visual_encoder/models/contrastive_forcing/mixed_modality_250k_all_small_natcap_symm_data/checkpoint-1500
+lora_config:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.1
+  init_lora_weights: gaussian
+  bias: none
+  task_type: FEATURE_EXTRACTION
+  target_modules: (.*(model.text_model).*(down_proj|gate_proj|up_proj|k_proj|q_proj|v_proj|o_proj).*$)
+eval_config:
+  wrapper_cls: BiEuroVBertWrapper
+  tasks:
+  - ViDoRe(v1)
+  - ViDoRe(v2)
+  - MSCOCOT2IRetrieval
+  - MSCOCOI2TRetrieval
+  - Flickr30kT2IRetrieval
+  - Flickr30kI2TRetrieval
+  - Caltech101
+  - Caltech101ZeroShot
+  - DTD
+  - DTDZeroShot
+  - FER2013
+  - FER2013ZeroShot
+  - EuroSAT
+  - EuroSATZeroShot
+  - OxfordFlowersClassification
+  - OxfordPets
+  - StanfordCars
+  - Food101Classification
+  batch_size: 32
+  output_folder: /lustre/fsn1/projects/rech/nwd/unj98sd/models/contrastive_forcing/results
+  encode_kwargs: {}

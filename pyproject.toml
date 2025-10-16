@@ -1,0 +1,26 @@
+[project]
+name = "modernvbert"
+version = "1.0.0"
+description = "ModernVBERT is a 250M-parameter vision–language encoder that aligns a text-encoder (Ettin-150M) with a vision-encoder (SigLIP2-B) through a MLM objective. When fine-tuned for document retrieval, ModernVBERT sets a new state of the art for sub-1B models on ViDoRe tasks."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.2.0",
+    "pillow>=11.3.0",
+    "transformers>=4.51.0",
+    "numpy>=1.24.0,<2.0.0",
+    "google-genai>=1.43.0",
+]
+
+[tool.setuptools]
+packages = ["modernvbert"]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::Warning"]
+testpaths = ["tests"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]

@@ -1,0 +1,74 @@
+model_args:
+  model_name_or_path: /lustre/fswork/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/flagship/opt_step-5500__merged
+  model_type: BiModernVBert
+  loss_type: BiEncoderLoss
+  loading_kwargs:
+    attn_implementation: flash_attention_2
+    torch_dtype: bfloat16
+    trust_remote_code: true
+train_dataset_args:
+- dataset_name_or_path: SmolVEncoder/mscoco-1st-caption
+  loading_kwargs:
+    modality: t2i
+    split: train
+- dataset_name_or_path: vidore/colpali_train_set
+  loading_kwargs:
+    split: train
+eval_dataset_args:
+- dataset_name_or_path: vidore/colpali_train_set
+  loading_kwargs:
+    split: test
+tr_args:
+  output_dir: /lustre/fsn1/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/flagship/simple_cl/simple_cl-opt_step-5500__merged
+  num_train_epochs: 1
+  per_device_train_batch_size: 64
+  per_device_eval_batch_size: 64
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: false
+  gradient_checkpointing_kwargs:
+    use_reentrant: false
+  eval_strategy: epoch
+  save_strategy: epoch
+  logging_steps: 1
+  warmup_ratio: 0.1
+  learning_rate: 0.0002
+  run_name: simple_cl-opt_step-5500__merged
+  report_to: wandb
+  load_best_model_at_end: true
+lora_config:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.1
+  init_lora_weights: gaussian
+  bias: none
+  task_type: FEATURE_EXTRACTION
+  target_modules: (.*(model.text_model).*(Wo|Wqkv|Wi).*$)
+eval_config:
+  wrapper_cls: BiModernVBertWrapper
+  tasks:
+  - VidoreArxivQARetrieval
+  - VidoreDocVQARetrieval
+  - VidoreInfoVQARetrieval
+  - VidoreTabfquadRetrieval
+  - VidoreTatdqaRetrieval
+  - VidoreShiftProjectRetrieval
+  - VidoreSyntheticDocQAAIRetrieval
+  - VidoreSyntheticDocQAEnergyRetrieval
+  - VidoreSyntheticDocQAGovernmentReportsRetrieval
+  - VidoreSyntheticDocQAHealthcareIndustryRetrieval
+  - Vidore2ESGReportsRetrieval
+  - Vidore2EconomicsReportsRetrieval
+  - Vidore2BioMedicalLecturesRetrieval
+  - Vidore2ESGReportsHLRetrieval
+  - MSCOCOT2IRetrieval
+  - MSCOCOI2TRetrieval
+  - Flickr30kT2IRetrieval
+  - Flickr30kI2TRetrieval
+  - Caltech101
+  - Food101Classification
+  - StanfordCars
+  - OxfordPets
+  - Imagenet1k
+  batch_size: 32
+  output_folder: /lustre/fswork/projects/rech/nwd/uyn61im/visual_encoder/posttraining/flagship/simple_cl/results
+  encode_kwargs: {}

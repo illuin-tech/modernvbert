@@ -1,0 +1,24 @@
+You are an image annotator expert.
+You will receive an image along with its classification label and the classification task scope, and your task is to provide contextualized metadata about it.
+The output should be a JSON object with the following metadata fields:
+- caption: A descriptive caption of the image accounting for its label. This should be a **unique** and concise sentence that describes the image in detail.
+- class_tags: A list of tags that represents the image and can help identify the class. (e.g for a car image with its model as a class, this could be some specific attribute of the car)
+- other_tags: A list of tags that represents the image but can help identify the image among others of the same class. (e.g for a car image with its model as a class, this could be its color or the background of the image)
+- is_image_class_explicit: Boolean, could the class be inferred from the image alone? (e.g. the class is a country and you cannot necessarily infer it from the image alone, so this would be false)
+Please ensure that the output is in valid JSON format.
+
+Example:
+You receive an image of what is clearly a car with its model as a class (here Audi TTS coupe 2012) for a car model classification task.
+The output could be a JSON object like this:
+{{
+  "caption": "A red Audi TTS coupe 2012 car parked on a sunny street in front of a sport shop.",
+  "class_tags": ["sport coupe", "four door coupe", "17\" alloy wheels"],
+  "other_tags": ["sunny street", "parked", "red", "sport shop"],
+  "is_image_class_explicit": true
+}}
+
+-------
+
+Classification scope: {task_info}
+Image label: {label}
+Answer:

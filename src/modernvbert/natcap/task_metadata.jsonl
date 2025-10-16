@@ -1,0 +1,17 @@
+{"dataset_name": "SmolVEncoder/dtd", "task_scope": "describe texture"}
+{"dataset_name": "SmolVEncoder/country211", "task_scope": "country where the picture is taken"}
+{"dataset_name": "SmolVEncoder/eurosat", "task_scope": "area zone type"}
+{"dataset_name": "SmolVEncoder/fer2013", "task_scope": "face emotion"}
+{"dataset_name": "SmolVEncoder/fgcv_aircraft", "task_scope": "aircraft model"}
+{"dataset_name": "SmolVEncoder/mnist", "task_scope": "handwritten digit numbers"}
+{"dataset_name": "SmolVEncoder/pets", "task_scope": "dog/cat species"}
+{"dataset_name": "SmolVEncoder/cars", "task_scope": "car model"}
+{"dataset_name": "SmolVEncoder/resisc45", "task_scope": "area zone type"}
+{"dataset_name": "SmolVEncoder/voc2007", "task_scope": "general objects"}
+{"dataset_name": "SmolVEncoder/caltech101", "task_scope": "general objects"}
+{"dataset_name": "SmolVEncoder/food101", "task_scope": "food type"}
+{"dataset_name": "SmolVEncoder/caltech256", "task_scope": "general objects"}
+{"dataset_name": "SmolVEncoder/birdsnap", "task_scope": "bird species"}
+{"dataset_name": "SmolVEncoder/ucf101", "task_scope": "action type"}
+{"dataset_name": "SmolVEncoder/sun397", "task_scope": "general scene recognition"}
+{"dataset_name": "SmolVEncoder/stl10", "task_scope": "general objects"}

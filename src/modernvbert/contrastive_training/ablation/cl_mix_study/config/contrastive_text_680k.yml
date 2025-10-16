@@ -1,0 +1,53 @@
+model_args:
+  model_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/models/ablation_vbert
+  model_type: BiEuroVBert
+  loss_type: BiEncoderLoss
+  loading_kwargs:
+    attn_implementation: flash_attention_2
+    torch_dtype: bfloat16
+    trust_remote_code: true
+train_dataset_args:
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/rlhn
+  loading_kwargs:
+    subsets:
+    - train
+tr_args:
+  output_dir: /linkhome/rech/genrce01/unj98sd/visual_encoder/models/contrastive_forcing/text_only_680k
+  num_train_epochs: 1
+  per_device_train_batch_size: 64
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: true
+  gradient_checkpointing_kwargs:
+    use_reentrant: false
+  eval_strategy: 'no'
+  save_strategy: epoch
+  logging_steps: 1
+  warmup_ratio: 0.1
+  learning_rate: 0.0002
+  run_name: pt_contrastive_text_only_680k
+  report_to: wandb
+lora_config:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.1
+  init_lora_weights: gaussian
+  bias: none
+  task_type: FEATURE_EXTRACTION
+  target_modules: (.*(model.text_model).*(down_proj|gate_proj|up_proj|k_proj|q_proj|v_proj|o_proj).*$)
+# eval_config:
+#   wrapper_cls: BiEuroVBertWrapper
+#   tasks:
+#   - ViDoRe(v1)
+#   - ViDoRe(v2)
+#   - MSCOCOT2IRetrieval
+#   - MSCOCOI2TRetrieval
+#   - Flickr30kT2IRetrieval
+#   - Flickr30kI2TRetrieval
+#   - Caltech101
+#   - Food101Classification
+#   - StanfordCars
+#   - OxfordPets
+#   - Imagenet1k
+#   batch_size: 32
+#   output_folder: /lustre/fsn1/projects/rech/nwd/unj98sd/models/contrastive_forcing/results
+#   encode_kwargs: {}

@@ -1,0 +1,81 @@
+model_args:
+  model_name_or_path: /lustre/fsn1/projects/rech/nwd/unj98sd/models/flagship-base
+  model_type: ColModernVBert
+  loss_type: ColbertLoss
+  loading_kwargs:
+    attn_implementation: flash_attention_2
+    torch_dtype: bfloat16
+    trust_remote_code: true
+train_dataset_args:
+- dataset_name_or_path: /lustre/fsn1/projects/rech/nwd/unj98sd/data_dir/colpali_train_set
+  loading_kwargs:
+    mode: vidore
+    split: train
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/mscoco-1st-caption
+  loading_kwargs: 
+    split: train
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/natcap
+  loading_kwargs:
+    num_samples: 118000
+- dataset_name_or_path: /linkhome/rech/genrce01/unj98sd/visual_encoder/data_dir/rlhn
+  loading_kwargs:
+    subsets:
+    - train
+eval_dataset_args:
+- dataset_name_or_path: /lustre/fsn1/projects/rech/nwd/unj98sd/data_dir/colpali_train_set
+  loading_kwargs:
+    mode: vidore
+    split: test
+tr_args:
+  output_dir: /lustre/fsn1/projects/rech/nwd/unj98sd/models/flagship_postrainings/full_cl_li_1_epoch_natcap_text_2
+  num_train_epochs: 1
+  per_device_train_batch_size: 32
+  per_device_eval_batch_size: 64
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: false
+  gradient_checkpointing_kwargs:
+    use_reentrant: false
+  eval_strategy: steps
+  save_strategy: steps
+  save_steps: 500
+  save_total_limit: 10
+  eval_steps: 100
+  logging_steps: 1
+  warmup_ratio: 0.1
+  learning_rate: 0.0002
+  run_name: full_cl_li_1_epoch_natcap_text_2
+  report_to: wandb
+  load_best_model_at_end: true
+  use_symmetric_loss: true
+lora_config:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.1
+  init_lora_weights: gaussian
+  bias: none
+  task_type: FEATURE_EXTRACTION
+  target_modules: (.*(model.text_model).*(Wo|Wqkv|Wi).*$)
+eval_config:
+  wrapper_cls: ColModernVBertWrapper
+  tasks:
+  - ViDoRe(v1)
+  - ViDoRe(v2)
+  - MSCOCOT2IRetrieval
+  - MSCOCOI2TRetrieval
+  - Flickr30kT2IRetrieval
+  - Flickr30kI2TRetrieval
+  - Caltech101
+  - Caltech101ZeroShot
+  - DTD
+  - DTDZeroShot
+  - FER2013
+  - FER2013ZeroShot
+  - EuroSAT
+  - EuroSATZeroShot
+  - OxfordFlowersClassification
+  - OxfordPets
+  - StanfordCars
+  - Food101Classification
+  batch_size: 32
+  output_folder: /linkhome/rech/genrce01/unj98sd/visual_encoder/posttraining/flagship/full_cl/results
+  encode_kwargs: {}

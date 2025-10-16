@@ -1,0 +1,90 @@
+model_args:
+  model_name_or_path: /lustre/fsn1/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/slbert/vbert-siglip2-slbert-30_210/opt_step-30000__merged
+  model_type: BiEuroVBert
+  loss_type: BiEncoderLoss
+  loading_kwargs:
+    attn_implementation: flash_attention_2
+    torch_dtype: bfloat16
+    trust_remote_code: true
+train_dataset_args:
+- dataset_name_or_path: SmolVEncoder/mscoco-1st-caption
+  loading_kwargs:
+    modality: t2i
+    split: train[:118000]
+- dataset_name_or_path: vidore/colpali_train_set
+  loading_kwargs:
+    split: train[:118000]
+eval_dataset_args:
+- dataset_name_or_path: vidore/colpali_train_set
+  loading_kwargs:
+    split: test
+tr_args:
+  output_dir: /lustre/fsn1/projects/rech/nwd/uyn61im/checkpoints/experiments/vbert/ablations/cl_scaling/encoder/cl_scaling-100pct
+  num_train_epochs: 50
+  max_steps: 920
+  per_device_train_batch_size: 64
+  per_device_eval_batch_size: 64
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: true
+  gradient_checkpointing_kwargs:
+    use_reentrant: false
+  eval_strategy: epoch
+  save_strategy: epoch
+  logging_steps: 1
+  warmup_ratio: 0.1
+  learning_rate: 0.0002
+  run_name: cl_scaling__encoder-100pct
+  report_to: wandb
+  load_best_model_at_end: true
+lora_config:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.1
+  init_lora_weights: gaussian
+  bias: none
+  task_type: FEATURE_EXTRACTION
+  target_modules: (.*(model.text_model).*(down_proj|gate_proj|up_proj|k_proj|q_proj|v_proj|o_proj).*$)
+eval_config:
+  wrapper_cls: BiEuroVBertWrapper
+  tasks:
+  # Document Retrieval
+  - VidoreArxivQARetrieval
+  - VidoreDocVQARetrieval
+  - VidoreInfoVQARetrieval
+  - VidoreTabfquadRetrieval
+  - VidoreTatdqaRetrieval
+  - VidoreShiftProjectRetrieval
+  - VidoreSyntheticDocQAAIRetrieval
+  - VidoreSyntheticDocQAEnergyRetrieval
+  - VidoreSyntheticDocQAGovernmentReportsRetrieval
+  - VidoreSyntheticDocQAHealthcareIndustryRetrieval
+  - Vidore2ESGReportsRetrieval
+  - Vidore2EconomicsReportsRetrieval
+  - Vidore2BioMedicalLecturesRetrieval
+  - Vidore2ESGReportsHLRetrieval
+  # Caption Retrieval
+  - MSCOCOT2IRetrieval
+  - MSCOCOI2TRetrieval
+  - Flickr30kT2IRetrieval
+  - Flickr30kI2TRetrieval
+  # ClassificationZS
+  - Caltech101ZeroShot
+  - Food101ZeroShot
+  - StanfordCarsZeroShot
+  - OxfordPetsZeroShot
+  - DTDZeroShot
+  - FER2013ZeroShot
+  - EuroSATZeroShot
+  - CIFAR100ZeroShot
+  # Classification
+  - Caltech101
+  - Food101Classification
+  - StanfordCars
+  - OxfordPets
+  - DTD
+  - FER2013
+  - EuroSAT
+  - CIFAR100
+  batch_size: 32
+  output_folder: /lustre/fswork/projects/rech/nwd/uyn61im/visual_encoder/posttraining/ablations/cl_scaling/results
+  encode_kwargs: {}
